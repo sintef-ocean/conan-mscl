@@ -18,14 +18,16 @@ class MSCLConan(ConanFile):
     generators = ("cmake_paths", "cmake_find_package")
     requires = ("boost/1.70.0","openssl/1.0.2u")
     exports = ("version.txt", "CMakeLists.txt")
+    exports_sources = "*"
 
     def set_version(self):
         self.version = tools.load(self.recipe_folder + os.sep + "version.txt").strip()
 
     def source(self):
-        self.run("git clone --depth 1 -b v{0} https://github.com/LORD_MicroStrain/MSCL.git".format(self.version))
+        tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v%s.tar.gz" % self.version)
 
     def build(self):
+        tools.replace_in_file(str(self.build_folder) + os.sep +"CMakeLists.txt", "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",'''${CMAKE_CURRENT_SOURCE_DIR}/MSCL-%s/'''%self.version )
         cmake = CMake(self, parallel=self.options.multi_core)
         cmake.configure()
         cmake.build()
