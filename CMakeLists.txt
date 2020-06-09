@@ -55,7 +55,7 @@ endforeach()
 add_library(${MSCL} STATIC ${SOURCES})
 
 target_include_directories(${MSCL} PRIVATE "${CONAN_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source")
-target_link_libraries(${MSCL} PUBLIC  Boost::Boost OpenSSL::OpenSSL)
+target_link_libraries(${MSCL} PRIVATE  Boost::Boost OpenSSL::OpenSSL)
 if (UNIX)
     target_compile_definitions(${MSCL} PUBLIC UNIX_BUILD)
 endif()
