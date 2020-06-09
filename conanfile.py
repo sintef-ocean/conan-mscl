@@ -36,6 +36,7 @@ class MSCLConan(ConanFile):
         include_path = os.path.join(self.build_folder,os.path.join("MSCL",os.path.join("MSCL","source")))
         self.copy("*.h",dst="include", src=include_path)
         self.copy("*.hpp",dst="include", src=include_path)
+        self.copy("*.cmake", dst=".")
         if self.settings.os == "Windows":
             self.copy("*.lib", dst="lib", keep_path=False)
             self.copy("*.pdb", dst="lib", keep_path=False)
@@ -45,6 +46,5 @@ class MSCLConan(ConanFile):
             self.copy("*mscl.so", dst="lib", keep_path=False)
 
     def package_info(self):
-        self.copy("*.cmake", dst=".")
         self.cpp_info.name = "MSCL"
         self.cpp_info.libs = ["mscl"]

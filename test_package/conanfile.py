@@ -3,12 +3,10 @@ import os
 
 class MSCLTestConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = "cmake"
+    generators = ("cmake_paths", "cmake_find_package")
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    requires =("mscl/%s@sintef/testing" % (tools.load(".." + os.sep + "version.txt").strip()),
-               "boost/1.72.0",
-               "openssl/1.1.1g")
+    requires = "mscl/%s@sintef/testing" % (tools.load(".." + os.sep + "version.txt").strip())
 
     def build(self):
         cmake = CMake(self)
