@@ -38,14 +38,10 @@ jobs:
         run: conan remote add ${SINTEF_REMOTE} ${CONAN_UPLOAD} --insert 0
       - name: Conan create
         run: |
-          BRANCH=${GITHUB_REF#refs/*/}
-          SHORT_BRANCH=${BRANCH:0:50}
-          CHANNEL2=${SHORT_BRANCH//\//_}
-          CHANNEL=testing
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
             -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
-            -b missing . sintef/${CHANNEL}
+            -b missing . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef 'mscl*'
