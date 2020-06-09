@@ -4,17 +4,16 @@ name: Clang Conan
 on: [push]
 
 env:
-  CONAN_REFERENCE: "mscl/0.1"
+  SINTEF_REFERENCE: "mscl"
   SINTEF_CONAN_CLASS: "MSCLConan"
   CONAN_UPLOAD: "https://api.bintray.com/conan/sintef-ocean/conan"
-  SINTEF_REMOTE: sintef
   CONAN_PASSWORD_SINTEF: ${{ secrets.BINTRAY_API_KEY }}
   CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.BINTRAY_USER }}
   CONAN_NON_INTERACTIVE: True
   CONAN_USE_ALWAYS_SHORT_PATHS: True
 
 jobs:
-  conan-on-clang:
+  conan-with-clang:
     name: Conan
     runs-on: ${{ matrix.os }}
     env:
@@ -45,7 +44,7 @@ jobs:
             -b missing . sintef/stable
       - name: Conan upload
         run: |
-          conan upload --all -c -r sintef 'mscl*' --retry 10
+          conan upload --all -c -r sintef '${SINTEF_REFERENCE}*' --retry 10
       - name: Bintray info
         run: |
           python3 bintray.py ${SINTEF_CONAN_CLASS} ${CONAN_LOGIN_USERNAME_SINTEF} ${CONAN_PASSWORD_SINTEF}
