@@ -5,6 +5,7 @@ on: [push]
 
 env:
   CONAN_REFERENCE: "mscl/0.1"
+  SINTEF_CONAN_CLASS: "MSCLConan"
   CONAN_UPLOAD: "https://api.bintray.com/conan/sintef-ocean/conan"
   SINTEF_REMOTE: sintef
   CONAN_PASSWORD_SINTEF: ${{ secrets.BINTRAY_API_KEY }}
@@ -32,7 +33,7 @@ jobs:
       - name: Install prerequisites
         run: |
           sudo pip3 install --upgrade setuptools pip
-          sudo pip3 install conan
+          sudo pip3 install conan requests
           sudo pip3 install conan_package_tools
       - name: Configure Conan
         run: conan remote add ${SINTEF_REMOTE} ${CONAN_UPLOAD} --insert 0
@@ -45,3 +46,5 @@ jobs:
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef 'mscl*' --retry 10
+        run: |
+          python3 bintray.py ${SINTEF_CONAN_CLASS} ${CONAN_LOGIN_USERNAME_SINTEF} ${CONAN_PASSWORD_SINTEF}
