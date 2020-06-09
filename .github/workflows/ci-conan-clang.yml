@@ -25,7 +25,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         build_type: [Debug, Release]
-        compiler_version: [6.0, 8, 9]
+        compiler_version: [8, 9]
         compiler_libcxx: [libstdc++11]
 
     steps:
