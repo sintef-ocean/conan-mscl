@@ -4,6 +4,11 @@ import os
 
 class MSCLConan(ConanFile):
     name = "mscl"
+    try:
+        version = tools.load(os.getcwd() + os.sep + "version.txt").strip()
+    except:
+        print("Could not set version from version file...")
+
     license = "MIT"
     author = "LORD Corporation"
     description = "MSCL - The MicroStrain Communication Library. MSCL is developed by LORD Sensing - Microstrain in Williston, VT. It was created to make it simple to interact with our Wireless, Inertial, and digital Displacement sensors."
@@ -17,14 +22,14 @@ class MSCLConan(ConanFile):
                        "multi_core": False}
     generators = ("cmake_paths", "cmake_find_package")
     requires = ("boost/1.70.0","openssl/1.0.2u")
-
     exports = ("version.txt", "CMakeLists.txt")
-
-    def source(self):
-        self.run("git clone https://github.com/LORD-MicroStrain/MSCL.git")
 
     def set_version(self):
         self.version = tools.load(self.recipe_folder + os.sep + "version.txt").strip()
+
+    def source(self):
+        self.version()
+        self.run("git clone --depth 1 -b v{0} https://github.com/LORD_MicroStrain/MSCL.git".format(self.version))
 
     def build(self):
         cmake = CMake(self, parallel=self.options.multi_core)
