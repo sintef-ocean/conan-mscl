@@ -1,3 +1,7 @@
+![GCC Conan](https://github.com/sintef-ocean/conan-mscl/workflows/GCC%20Conan/badge.svg)
+![MSVC Conan](https://github.com/sintef-ocean/conan-mscl/workflows/MSVC%20Conan/badge.svg)
+![Clang Conan](https://github.com/sintef-ocean/conan-mscl/workflows/Clang%20Conan/badge.svg)
+
 # Conan package recipe and package test for MSCL
 To create the package and run the `test_package` recipe, simply run
 ```bash
