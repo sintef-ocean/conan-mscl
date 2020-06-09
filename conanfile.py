@@ -4,11 +4,6 @@ import os
 
 class MSCLConan(ConanFile):
     name = "mscl"
-    try:
-        version = tools.load(os.getcwd() + os.sep + "version.txt").strip()
-    except:
-        print("Could not set version from version file...")
-
     license = "MIT"
     author = "LORD Corporation"
     description = "MSCL - The MicroStrain Communication Library. MSCL is developed by LORD Sensing - Microstrain in Williston, VT. It was created to make it simple to interact with our Wireless, Inertial, and digital Displacement sensors."
