@@ -44,4 +44,4 @@ jobs:
             -b missing . sintef/stable
       - name: Conan upload
         run: |
-          conan upload --all -c -r sintef 'mscl*'
+          conan upload --all -c -r sintef 'mscl*' --retry 10
