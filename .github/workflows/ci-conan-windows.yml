@@ -1,4 +1,4 @@
-name: GCC Conan
+name: MSVC Conan
 
 # This workflow is triggered on pushes to the repository.
 on: [push]
