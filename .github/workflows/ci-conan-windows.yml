@@ -37,9 +37,7 @@ jobs:
         run: conan remote add sintef https://api.bintray.com/conan/sintef-ocean/conan --insert 0
       - name: Conan create
         run: |
-          conan create -s build_type=${{ matrix.build_type }} \
-            -s compiler.version=${{ matrix.compiler_version }} \
-            -b missing . sintef/stable
+          conan create -s build_type=${{ matrix.build_type }} -s compiler.version=${{ matrix.compiler_version }} -b missing . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef 'mscl*'
