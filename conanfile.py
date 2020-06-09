@@ -23,7 +23,6 @@ class MSCLConan(ConanFile):
         self.version = tools.load(self.recipe_folder + os.sep + "version.txt").strip()
 
     def source(self):
-        self.version()
         self.run("git clone --depth 1 -b v{0} https://github.com/LORD_MicroStrain/MSCL.git".format(self.version))
 
     def build(self):
