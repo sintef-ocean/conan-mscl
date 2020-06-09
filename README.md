@@ -36,7 +36,7 @@ The package is usually consumed using the `conan install` command or a *conanfil
 
    Insert into your *CMakeLists.txt* something like the following lines:
    ```cmake
-   cmake_minimum_required(VERSION 3.1.2)
+   cmake_minimum_required(VERSION 3.13)
    project(TheProject CXX)
 
    include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
