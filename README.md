@@ -1,9 +1,10 @@
 # Conan package recipe and package test for MSCL
 To create the package and run the `test_package` recipe, simply run
 ```bash
-conan create . sintef/testing -s build_type=<Release|Debug>
+conan create . <user>/<status> -s build_type=<Release|Debug>
 ```
-This will build the `(lib)mscl.(a)lib` file and install it in your local .conan repository.
+
+This will build the `mscl` library and install it in your local .conan repository.
 Also, it will compile and run a tester.
 NB!! Note that the tester will fail if a MRU is not connected to `COM4`.
 However, if the tester nags about wrong COM-port, the conan package is working.
