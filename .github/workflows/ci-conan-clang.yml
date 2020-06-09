@@ -25,7 +25,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         build_type: [Debug, Release]
-        compiler_version: [6, 8, 9]
+        compiler_version: [6.0, 8, 9]
         compiler_libcxx: [libstdc++11]
 
     steps:
@@ -36,7 +36,7 @@ jobs:
           sudo pip3 install conan
           sudo pip3 install conan_package_tools
       - name: Configure Conan
-        run: conan remote add $SINTEF_REMOTE $BINTRAY_URL --insert 0
+        run: conan remote add ${SINTEF_REMOTE} ${BINTRAY_URL} --insert 0
       - name: Conan create
         run: |
           BRANCH=${GITHUB_REF#refs/*/}
@@ -49,4 +49,4 @@ jobs:
             -b missing . sintef/${CHANNEL}
       - name: Conan upload
         run: |
-          conan upload --all -c -r $SINTEF_REMOTE '*'
+          conan upload --all -c -r ${SINTEF_REMOTE} '${CONAN_REFERENCE}'

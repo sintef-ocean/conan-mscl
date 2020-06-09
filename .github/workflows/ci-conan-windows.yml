@@ -47,4 +47,4 @@ jobs:
             -b missing . sintef/${CHANNEL}
       - name: Conan upload
         run: |
-          conan upload --all -c -r ${SINTEF_REMOTE} '*'
+          conan upload --all -c -r ${SINTEF_REMOTE} '${CONAN_REFERENCE}'
