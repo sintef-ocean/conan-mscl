@@ -14,9 +14,11 @@ class MSCLTestConan(ConanFile):
         cmake.build()
 
     def test(self):
-        tester_path = os.path.join(self.build_folder, "bin")
+        target_name = "TestTarget"
         if self.settings.os=="Windows":
-            tester_exe = "TestTarget.exe"
+            tester_exe = target_name + ".exe"
+            tester_path = os.path.join(self.build_folder, str(self.settings.build_type))
         else:
-            tester_exe = "TestTarget"
+            tester_exe = target_name
+            tester_path = "." + os.sep
         self.run(os.path.join(tester_path, tester_exe))

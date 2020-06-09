@@ -14,19 +14,18 @@ env:
   BINTRAY_URL: https://api.bintray.com/conan/sintef-ocean/conan
 
 jobs:
-  conan-on-linux:
+  conan-on-windows:
     name: Conan
     runs-on: ${{ matrix.os }}
     env:
-      CC: gcc-${{ matrix.compiler_version }}
-      CXX: g++-${{ matrix.compiler_version }}
+      CONAN_USER_HOME_SHORT: C:\c
+      CONAN_USE_ALWAYS_SHORT_PATHS: 1
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [windows-2019]
         build_type: [Debug, Release]
-        compiler_version: [7]
-        compiler_libcxx: [libstdc++11]
+        compiler_version: [15, 16]
 
     steps:
       - uses: actions/checkout@v2
@@ -45,7 +44,6 @@ jobs:
           CHANNEL=testing
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
-            -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
             -b missing . sintef/${CHANNEL}
       - name: Conan upload
         run: |

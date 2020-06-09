@@ -1,0 +1,52 @@
+name: Clang Conan
+
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+env:
+  CONAN_REFERENCE: "mscl/0.1"
+  CONAN_UPLOAD: "https://api.bintray.com/conan/sintef-ocean/conan"
+  SINTEF_REMOTE: sintef
+  CONAN_PASSWORD_SINTEF: ${{ secrets.BINTRAY_API_KEY }}
+  CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.BINTRAY_USER }}
+  CONAN_NON_INTERACTIVE: True
+  CONAN_USE_ALWAYS_SHORT_PATHS: True
+  BINTRAY_URL: https://api.bintray.com/conan/sintef-ocean/conan
+
+jobs:
+  conan-on-clang:
+    name: Conan
+    runs-on: ${{ matrix.os }}
+    env:
+      CC: clang-${{ matrix.compiler_version }}
+      CXX: clang++-${{ matrix.compiler_version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        build_type: [Debug, Release]
+        compiler_version: [6, 8, 9]
+        compiler_libcxx: [libstdc++11]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install prerequisites
+        run: |
+          sudo pip3 install --upgrade setuptools pip
+          sudo pip3 install conan
+          sudo pip3 install conan_package_tools
+      - name: Configure Conan
+        run: conan remote add $SINTEF_REMOTE $BINTRAY_URL --insert 0
+      - name: Conan create
+        run: |
+          BRANCH=${GITHUB_REF#refs/*/}
+          SHORT_BRANCH=${BRANCH:0:50}
+          CHANNEL2=${SHORT_BRANCH//\//_}
+          CHANNEL=testing
+          conan create -s build_type=${{ matrix.build_type }} \
+            -s compiler.version=${{ matrix.compiler_version }} \
+            -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
+            -b missing . sintef/${CHANNEL}
+      - name: Conan upload
+        run: |
+          conan upload --all -c -r $SINTEF_REMOTE '*'
