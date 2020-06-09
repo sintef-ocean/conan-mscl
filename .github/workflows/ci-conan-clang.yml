@@ -35,7 +35,7 @@ jobs:
           sudo pip3 install conan requests
           sudo pip3 install conan_package_tools
       - name: Configure Conan
-        run: conan remote add ${SINTEF_REMOTE} ${CONAN_UPLOAD} --insert 0
+        run: conan remote add sintef ${CONAN_UPLOAD} --insert 0
       - name: Conan create
         run: |
           conan create -s build_type=${{ matrix.build_type }} \
