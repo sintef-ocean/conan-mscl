@@ -5,9 +5,13 @@ import os
 class MSCLConan(ConanFile):
     name = "mscl"
     license = "MIT"
-    author = "LORD Corporation"
-    description = "MSCL - The MicroStrain Communication Library. MSCL is developed by LORD Sensing - Microstrain in Williston, VT. It was created to make it simple to interact with our Wireless, Inertial, and digital Displacement sensors."
-    topics = ("MRU API")
+    author = "Stian Skjong (stian.skjong@sintef.no)"
+    description = \
+        "MSCL - The MicroStrain Communication Library. "\
+        "MSCL is developed by LORD Sensing - Microstrain in Williston, VT. "\
+        "It was created to make it simple to interact with our Wireless, "\
+        "Inertial, and digital Displacement sensors."
+    topics = ("MRU API", "MicroStrain")
     homepage = "https://github.com/LORD-MicroStrain/MSCL"
     url = "http://github.com/sintef-ocean/conan-mscl"
     settings = "os", "compiler", "build_type", "arch"
@@ -16,7 +20,7 @@ class MSCLConan(ConanFile):
     default_options = {"shared": False,
                        "multi_core": False}
     generators = ("cmake_paths", "cmake_find_package")
-    requires = ("boost/1.70.0","openssl/1.0.2u")
+    requires = ("boost/1.70.0", "openssl/1.0.2u")
     exports = ("version.txt", "CMakeLists.txt")
     exports_sources = "*"
 
