@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.6)
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" projectVersion)
 project("mscl"
         VERSION ${projectVersion}
-        DESCRIPTION "MSCL - The MicroStrain Communication Library."
-        LANGUAGE CXX)
+        LANGUAGES CXX
+        DESCRIPTION "MSCL - The MicroStrain Communication Library.")
 
 set (CMAKE_CXX_STANDARD 11)
 if (UNIX)
