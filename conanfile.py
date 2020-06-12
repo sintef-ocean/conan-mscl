@@ -38,7 +38,7 @@ class MSCLConan(ConanFile):
         cmake.install()
 
     def package(self):
-        self.copy("LICENSE*", dst="licenses", ignore_case=True, keep_path=True)
+        self.copy("LICENSE*", dst="licenses", src="MSCL-"+str(self.version), ignore_case=True, keep_path=True)
 
         include_path = os.path.join(self.build_folder,os.path.join("MSCL-"+str(self.version),os.path.join("MSCL","source")))
         self.copy("*.h",dst="include", src=include_path)
