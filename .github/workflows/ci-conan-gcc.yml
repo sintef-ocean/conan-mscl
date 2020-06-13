@@ -46,6 +46,11 @@ jobs:
           sudo pip3 install --upgrade setuptools pip
           sudo pip3 install conan requests
           sudo pip3 install conan_package_tools
+          if [ ${{ matrix.compiler_version }} -eq 6 ]; then
+              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+              sudo apt-get update
+              sudo apt-get install gcc-6 g++-6 -y
+          fi
       - name: Configure Conan
         run: conan remote add sintef ${CONAN_UPLOAD} --insert 0
       - name: Conan create
