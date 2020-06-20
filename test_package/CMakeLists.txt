@@ -9,10 +9,8 @@ endif()
 message(STATUS "Using Conan to build...")
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
-include_directories(${CONAN_INCLUDE_DIRS})
 set(TESTER "TestTarget")
-
-find_package(MSCL MODULE REQUIRED)
+find_package(MSCL CONFIG REQUIRED)
 
 set( SRC
     ${CMAKE_SOURCE_DIR}/src/getCurrentConfig.h
@@ -22,6 +20,5 @@ set( SRC
     ${CMAKE_SOURCE_DIR}/src/setToIdle.h
     ${CMAKE_SOURCE_DIR}/src/startSampling.h)
 
-
 add_executable(${TESTER} ${SRC})
-target_link_libraries(${TESTER} PUBLIC  MSCL::MSCL)
+target_link_libraries(${TESTER} PUBLIC  MSCL::mscl)# Boost::Boost)

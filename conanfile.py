@@ -35,23 +35,10 @@ class MSCLConan(ConanFile):
         cmake = CMake(self, parallel=self.options.multi_core)
         cmake.configure()
         cmake.build()
-        cmake.install()
 
     def package(self):
-        self.copy("LICENSE*", dst="licenses", src="MSCL-"+str(self.version), ignore_case=True, keep_path=True)
-
-        include_path = os.path.join(self.build_folder,os.path.join("MSCL-"+str(self.version),os.path.join("MSCL","source")))
-        self.copy("*.h",dst="include", src=include_path)
-        self.copy("*.hpp",dst="include", src=include_path)
-        self.copy("MSCLConfig*.cmake", dst=".", src="bin", keep_path=False)
-        if self.settings.os == "Windows":
-            self.copy("*.lib", dst="lib", keep_path=False)
-            self.copy("*.pdb", dst="lib", keep_path=False)
-            self.copy("*.dll", dst="lib", keep_path=False)
-        else:
-            self.copy("*mscl.a", dst="lib", keep_path=False)
-            self.copy("*mscl.so", dst="lib", keep_path=False)
+        cmake = CMake(self)
+        cmake.install()
 
     def package_info(self):
-        self.cpp_info.name = "MSCL"
-        self.cpp_info.libs = ["mscl"]
+        self.user_info.DIR = ("%s" % (self.package_folder)).replace("\\","/")

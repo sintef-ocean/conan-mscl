@@ -1,0 +1,35 @@
+set(_this_project_name MSCL)
+
+include(CMakeFindDependencyMacro)
+
+list(INSERT CMAKE_MODULE_PATH 0 "@PACKAGE_INSTALL_CONFIGDIR@")
+
+find_dependency(OpenSSL MODULE REQUIRED)
+find_dependency(Boost MODULE REQUIRED)
+
+list(REMOVE_AT CMAKE_MODULE_PATH 0)
+
+@PACKAGE_INIT@
+set(_supported_components "")
+
+
+if(NOT TARGET MSCL::mscl)
+  include("@PACKAGE_INSTALL_CONFIGDIR@/${_this_project_name}Targets.cmake")
+
+  foreach(_comp ${MSCL_FIND_COMPONENTS})
+    if (NOT ";${_supported_components};" MATCHES _comp)
+      list(APPEND _unsupported_components ${_comp})
+    else()
+      include("@PACKAGE_INSTALL_CONFIGDIR@/${_this_project_name}${_comp}Targets.cmake")
+    endif()
+  endforeach()
+endif()
+
+# Set components also?
+set(MSCL_LIBRARIES MSCL::mscl)
+
+check_required_components(MSCL)
+
+if(NOT MSCL_FOUND)
+  set(MSCL_NOT_FOUND_MESSAGE "The following unsupported components were requested: ${_unsupported_components}")
+endif()

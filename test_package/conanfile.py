@@ -7,7 +7,7 @@ class MSCLTestConan(ConanFile):
     generators = ("cmake_paths", "cmake_find_package")
     options = {"shared": [True, False]}
     default_options = {"shared": False}
-    requires = "mscl/%s@sintef/testing" % \
+    requires = "mscl/%s@sintef/stable" % \
         (tools.load(".." + os.sep + "version.txt").strip())
 
     def build(self):

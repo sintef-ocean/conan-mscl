@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.6)
 file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/version.txt" projectVersion)
-project("mscl"
+project("MSCL"
         VERSION ${projectVersion}
         LANGUAGES CXX
         DESCRIPTION "MSCL - The MicroStrain Communication Library.")
@@ -59,19 +59,38 @@ endforeach()
 add_library(${MSCL} STATIC ${SOURCES})
 
 target_include_directories(${MSCL} PRIVATE "${CONAN_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source")
-target_link_libraries(${MSCL} PRIVATE  Boost::Boost OpenSSL::OpenSSL)
+target_link_libraries(${MSCL} PUBLIC  Boost::Boost OpenSSL::OpenSSL)
 if (UNIX)
     target_compile_definitions(${MSCL} PUBLIC UNIX_BUILD)
 endif()
-install(TARGETS ${MSCL} EXPORT MSCLConfig DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/)
 
-export(TARGETS
-       ${MSCL}
-       NAMESPACE MSCL::
-       FILE "${CMAKE_BINARY_DIR}/MSCLConfig.cmake")
+target_include_directories(${MSCL} PUBLIC ${CMAKE_INSTALL_PREFIX}/include)
+
+# ==========================================
+# Export config
+# ==========================================
+
+install(TARGETS ${MSCL} EXPORT ${CMAKE_PROJECT_NAME} ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+
+include(CMakePackageConfigHelpers)
+set(INSTALL_CONFIGDIR "cmake")
+configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
+                              PATH_VARS INSTALL_CONFIGDIR
+                              INSTALL_DESTINATION ".")
 
 install(EXPORT
-        MSCLConfig
-        DESTINATION "${CMAKE_BINARY_DIR}/bin/cmake"
-        NAMESPACE MSCL::
+        ${CMAKE_PROJECT_NAME}
+        DESTINATION "${INSTALL_CONFIGDIR}"
+        NAMESPACE "${CMAKE_PROJECT_NAME}::"
+        FILE "${CMAKE_PROJECT_NAME}Targets.cmake"
 )
+
+export( EXPORT
+        ${CMAKE_PROJECT_NAME}
+        NAMESPACE MSCL::
+        FILE "${INSTALL_CONFIGDIR}/${CMAKE_PROJECT_NAME}Targets.cmake")
+
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${INSTALL_CONFIGDIR} DESTINATION "." PATTERN *swp EXCLUDE)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake DESTINATION ".")
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/ DESTINATION include FILES_MATCHING PATTERN "*.h")
