@@ -29,7 +29,7 @@ class MSCLConan(ConanFile):
             self.recipe_folder + os.sep + "version.txt").strip()
 
     def source(self):
-        tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v%s.tar.gz"
+        tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v{}.tar.gz"
                   .format(self.version))
 
     def build(self):
