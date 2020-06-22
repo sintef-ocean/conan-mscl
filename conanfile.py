@@ -20,7 +20,7 @@ class MSCLConan(ConanFile):
     default_options = {"shared": False,
                        "multi_core": False}
     generators = ("cmake_paths", "cmake_find_package")
-    requires = ("boost/1.70.0", "openssl/1.0.2u")
+    requires = ("boost/1.70.0", "openssl/1.1.1g")
     exports = ("version.txt", "CMakeLists.txt")
     exports_sources = "*"
 
