@@ -64,13 +64,13 @@ if (UNIX)
     target_compile_definitions(${MSCL} PUBLIC UNIX_BUILD)
 endif()
 
-target_include_directories(${MSCL} PUBLIC ${CMAKE_INSTALL_PREFIX}/include)
+target_include_directories(${MSCL} PUBLIC "$<INSTALL_INTERFACE:include>")
 
 # ==========================================
 # Export config
 # ==========================================
 
-install(TARGETS ${MSCL} EXPORT ${CMAKE_PROJECT_NAME} ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+install(TARGETS ${MSCL} EXPORT ${CMAKE_PROJECT_NAME} ARCHIVE DESTINATION lib RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
 
 include(CMakePackageConfigHelpers)
 set(INSTALL_CONFIGDIR "cmake")
