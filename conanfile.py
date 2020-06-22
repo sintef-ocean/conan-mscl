@@ -25,13 +25,18 @@ class MSCLConan(ConanFile):
     exports_sources = "*"
 
     def set_version(self):
-        self.version = tools.load(self.recipe_folder + os.sep + "version.txt").strip()
+        self.version = tools.load(
+            self.recipe_folder + os.sep + "version.txt").strip()
 
     def source(self):
-        tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v%s.tar.gz" % self.version)
+        tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v%s.tar.gz"
+                  .format(self.version))
 
     def build(self):
-        tools.replace_in_file(str(self.build_folder) + os.sep +"CMakeLists.txt", "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",'''${CMAKE_CURRENT_SOURCE_DIR}/MSCL-%s/'''%self.version )
+        tools.replace_in_file(
+            str(self.build_folder) + os.sep + "CMakeLists.txt",
+            "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",
+            "${CMAKE_CURRENT_SOURCE_DIR}/MSCL-{}/".format(self.version))
         cmake = CMake(self, parallel=self.options.multi_core)
         cmake.configure()
         cmake.build()
@@ -41,4 +46,5 @@ class MSCLConan(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.user_info.DIR = ("%s" % (self.package_folder)).replace("\\","/")
+        self.user_info.DIR = ("{}"
+                              .format(self.package_folder)).replace("\\", "/")
