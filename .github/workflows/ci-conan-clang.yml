@@ -22,11 +22,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
-        build_type: [Debug, Release]
         compiler_version: [8, 9, 10]
-        compiler_libcxx: [libstdc++11]
-
+        build_type: [Debug, Release]
+        os: [ubuntu-20.04]
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
@@ -41,11 +39,12 @@ jobs:
         run: |
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
-            -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
-            -b missing -b mscl . sintef/stable
+            -s compiler.libcxx=libstdc++11 \
+            -b missing -b outdated -b mscl . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef ${SINTEF_REFERENCE} --retry 10 --retry-wait 20 --force
       - name: Bintray info
         run: |
-          python3 bintray.py ${SINTEF_CONAN_CLASS} ${CONAN_LOGIN_USERNAME_SINTEF} ${CONAN_PASSWORD_SINTEF}
+          python3 bintray.py ${SINTEF_CONAN_CLASS} \
+            ${CONAN_LOGIN_USERNAME_SINTEF} ${CONAN_PASSWORD_SINTEF}

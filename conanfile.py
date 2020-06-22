@@ -1,6 +1,6 @@
-from conans import ConanFile, CMake, tools, MSBuild
-import glob
+from conans import ConanFile, CMake, tools
 import os
+
 
 class MSCLConan(ConanFile):
     name = "mscl"

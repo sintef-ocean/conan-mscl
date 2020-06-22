@@ -22,29 +22,50 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        compiler_version: [6, 7, 8, 9]
         build_type: [Debug, Release]
-        compiler_version: [7, 8, 9]
-        compiler_libcxx: [libstdc++11]
-
+        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
+        exclude:
+          - os: ubuntu-16.04
+            compiler_version: 7
+          - os: ubuntu-16.04
+            compiler_version: 8
+          - os: ubuntu-16.04
+            compiler_version: 9
+          - os: ubuntu-18.04
+            compiler_version: 6
+          - os: ubuntu-18.04
+            compiler_version: 9
+          - os: ubuntu-20.04
+            compiler_version: 6
+          - os: ubuntu-20.04
+            compiler_version: 7
+          - os: ubuntu-20.04
+            compiler_version: 8
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
         run: |
-          sudo pip3 install --upgrade setuptools pip
+          sudo pip3 install --upgrade setuptools pip jinja2
           sudo pip3 install conan requests
           sudo pip3 install conan_package_tools
+          if [ ${{ matrix.compiler_version }} -eq 6 ]; then
+              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+              sudo apt-get update
+              sudo apt-get install gcc-6 g++-6 -y
+          fi
       - name: Configure Conan
         run: conan remote add sintef ${CONAN_UPLOAD} --insert 0
       - name: Conan create
         run: |
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
-            -s compiler.libcxx=${{ matrix.compiler_libcxx }} \
-            -b missing -b mscl . sintef/stable
+            -s compiler.libcxx=libstdc++11 \
+            -b missing -b outdated -b mscl . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef ${SINTEF_REFERENCE} --retry 10 --retry-wait 20 --force
       - name: Bintray info
         run: |
-          python3 bintray.py ${SINTEF_CONAN_CLASS} ${CONAN_LOGIN_USERNAME_SINTEF} ${CONAN_PASSWORD_SINTEF}
+          python3 bintray.py ${SINTEF_CONAN_CLASS} \
+            ${CONAN_LOGIN_USERNAME_SINTEF} ${CONAN_PASSWORD_SINTEF}

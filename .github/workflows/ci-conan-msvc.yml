@@ -22,11 +22,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-2019]
+        compiler_toolset: [v141, v142]
         build_type: [Debug, Release]
         compiler_version: [16]
-        compiler_toolset: [v141, v142]
-
+        os: [windows-2019]
     steps:
       - uses: actions/checkout@v2
       - name: Install prerequisites
@@ -41,10 +40,11 @@ jobs:
           conan create -s build_type=${{ matrix.build_type }} `
             -s compiler.toolset=${{ matrix.compiler_toolset }} `
             -s compiler.version=${{ matrix.compiler_version }} `
-            -b missing -b mscl . sintef/stable
+            -b missing -b outdated -b mscl . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef ${env:SINTEF_REFERENCE} --retry 10 --retry-wait 20 --force
       - name: Bintray info
         run: |
-          python bintray.py ${env:SINTEF_CONAN_CLASS} ${env:CONAN_LOGIN_USERNAME_SINTEF} ${env:CONAN_PASSWORD_SINTEF}
+          python bintray.py ${env:SINTEF_CONAN_CLASS} `
+            ${env:CONAN_LOGIN_USERNAME_SINTEF} ${env:CONAN_PASSWORD_SINTEF}
