@@ -35,8 +35,8 @@ class MSCLConan(ConanFile):
     def build(self):
         tools.replace_in_file(
             str(self.build_folder) + os.sep + "CMakeLists.txt",
-            "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",
-            "${CMAKE_CURRENT_SOURCE_DIR}/MSCL-{}/".format(self.version))
+            "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL/",
+            "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL-{}/".format(self.version))
         cmake = CMake(self, parallel=self.options.multi_core)
         cmake.configure()
         cmake.build()
