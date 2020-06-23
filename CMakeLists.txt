@@ -7,6 +7,7 @@ project("MSCL"
 
 set (CMAKE_CXX_STANDARD 11)
 if (UNIX)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
     add_compile_options("-Wl,-V")
 endif()
 
