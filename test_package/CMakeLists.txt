@@ -5,10 +5,6 @@ set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler flag extension (use -std=c++11 
 set(CMAKE_CXX_STANDARD 14) # The default CXX_STANDARD (resolves to a flag -std=c++17)..
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (UNIX)
-    add_compile_options("-Wl,-V")
-endif()
-
 message(STATUS "Using Conan to build...")
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 

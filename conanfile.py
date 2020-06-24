@@ -16,9 +16,11 @@ class MSCLConan(ConanFile):
     url = "http://github.com/sintef-ocean/conan-mscl"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False],
-               "multi_core": [True, False]}
+               "multi_core": [True, False],
+               "fPIC": [True, False]}
     default_options = {"shared": False,
-                       "multi_core": False}
+                       "multi_core": False,
+                       "fPIC": True}
     generators = ("cmake_paths", "cmake_find_package")
     requires = ("boost/1.70.0", "openssl/1.1.1g")
     exports = ("version.txt", "CMakeLists.txt")
@@ -32,12 +34,18 @@ class MSCLConan(ConanFile):
         tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v{}.tar.gz"
                   .format(self.version))
 
+    def configure(self):
+        if self.settings.compiler == "Visual Studio":
+            del self.options.fPIC
+
     def build(self):
         tools.replace_in_file(
             str(self.build_folder) + os.sep + "CMakeLists.txt",
             "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",
             "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL-{}/".format(self.version))
+
         cmake = CMake(self, parallel=self.options.multi_core)
+        cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.configure()
         cmake.build()
 

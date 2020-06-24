@@ -5,14 +5,9 @@ project("MSCL"
         LANGUAGES CXX
         DESCRIPTION "MSCL - The MicroStrain Communication Library.")
 
-set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler flag extension (use -std=c++11 instead of -std=gnu++11)
-set(CMAKE_CXX_STANDARD 14) # The default CXX_STANDARD (resolves to a flag -std=c++17)..
+set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler flag extension (use -std=c++14 instead of -std=gnu++14)
+set(CMAKE_CXX_STANDARD 14) # The default CXX_STANDARD (resolves to a flag -std=c++14)..
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if (UNIX)
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-    add_compile_options("-Wl,-V")
-endif()
 
 message(STATUS "Using Conan to build...")
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
