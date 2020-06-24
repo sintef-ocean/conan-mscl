@@ -45,7 +45,8 @@ class MSCLConan(ConanFile):
             "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL-{}/".format(self.version))
 
         cmake = CMake(self, parallel=self.options.multi_core)
-        cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+        if self.settings.os != "Windows:"
+            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         cmake.configure()
         cmake.build()
 
