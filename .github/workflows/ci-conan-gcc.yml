@@ -48,7 +48,6 @@ jobs:
         run: |
           sudo pip3 install --upgrade setuptools pip jinja2
           sudo pip3 install conan requests
-          sudo pip3 install conan_package_tools
           if [ ${{ matrix.compiler_version }} -eq 6 ]; then
               sudo add-apt-repository ppa:ubuntu-toolchain-r/test
               sudo apt-get update
