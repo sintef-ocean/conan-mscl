@@ -59,6 +59,7 @@ The package is usually consumed using the `conan install` command or a *conanfil
 | Option        | Allowed values    |   Default value   |
 | ------------- | ----------------- | ----------------- |
 | shared        | [True, False]     | False             |
+| fPIC          | [True, False]     | True              |
 | multi_core    | [True, False]     | False             |
 
 
