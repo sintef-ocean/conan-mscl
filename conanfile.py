@@ -35,7 +35,7 @@ class MSCLConan(ConanFile):
                   .format(self.version))
 
     def configure(self):
-        if self.settings.compiler == "Visual Studio":
+        if self.settings.os == "Windows":
             del self.options.fPIC
 
     def build(self):
