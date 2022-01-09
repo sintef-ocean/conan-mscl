@@ -29,8 +29,8 @@ jobs:
       - name: Install prerequisites
         run: |
           sudo apt-get update
-          sudo pip3 install --upgrade setuptools pip
-          sudo pip3 install conan requests
+          sudo pip3 install --upgrade setuptools pip requests
+          sudo pip3 install --upgrade conan
       - name: Configure Conan
         run: conan remote add sintef ${CONAN_UPLOAD} --insert 0
       - name: Conan create
