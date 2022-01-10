@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler_version: [9, 10]
+        compiler_version: [9, 10, 11]
         build_type: [Debug, Release]
         os: [ubuntu-18.04]
     container:
@@ -29,6 +29,7 @@ jobs:
       - name: Install prerequisites
         run: |
           sudo pip3 install --upgrade setuptools pip
+          sudo pip3 install --upgrade conan
       - name: Configure Conan
         run: conan remote add sintef ${CONAN_UPLOAD} --insert 0
       - name: Conan create
