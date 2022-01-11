@@ -45,7 +45,20 @@ class MSCLConan(ConanFile):
             "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL-{}/".format(self.version))
 
         tools.replace_in_file(
-            str(self.build_folder) + os.sep + "MSCL-{}/MSCL/source/stdafx.h".format(self.version),
+            str(self.build_folder) + os.sep
+            + "MSCL-{}/MSCL/source/stdafx.h".format(self.version),
+            "boost/detail/endian.hpp",
+            "boost/endian.hpp")
+
+        tools.replace_in_file(
+            str(self.build_folder) + os.sep
+            + "MSCL-{}/MSCL/source/mscl/Endianness.h".format(self.version),
+            "boost/detail/endian.hpp",
+            "boost/endian.hpp")
+
+        tools.replace_in_file(
+            str(self.build_folder) + os.sep
+            + "MSCL-{}/MSCL_Unit_Tests/Test_Utils.cpp".format(self.version),
             "boost/detail/endian.hpp",
             "boost/endian.hpp")
 
