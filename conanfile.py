@@ -22,7 +22,7 @@ class MSCLConan(ConanFile):
                        "multi_core": False,
                        "fPIC": True}
     generators = ("cmake_paths", "cmake_find_package")
-    requires = ("boost/1.70.0", "openssl/1.1.1g")
+    requires = ("boost/1.78.0", "openssl/1.1.1g")
     exports = ("version.txt", "CMakeLists.txt")
     exports_sources = "*"
 
@@ -43,6 +43,11 @@ class MSCLConan(ConanFile):
             str(self.build_folder) + os.sep + "CMakeLists.txt",
             "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",
             "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL-{}/".format(self.version))
+
+        tools.replace_in_file(
+            str(self.build_folder) + os.sep + "MSCL-{}/MSCL/source/stdafx.h".format(self.version),
+            "boost/detail/endian.hpp",
+            "boost/endian.hpp")
 
         cmake = CMake(self, parallel=self.options.multi_core)
         if self.settings.os != "Windows":

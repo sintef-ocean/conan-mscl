@@ -26,7 +26,8 @@ if (UNIX)
         "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/mscl/Communication/UpnpDeviceFinderCallback.cpp")
 else()
     set(EXCLUDES
-        "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/mscl/Communication/UnixSocketConnection.cpp")
+        "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/mscl/Communication/UnixSocketConnection.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/stdafx.h")
     macro(get_WIN32_WINNT version)
         if(CMAKE_SYSTEM_VERSION)
             set(ver ${CMAKE_SYSTEM_VERSION})
