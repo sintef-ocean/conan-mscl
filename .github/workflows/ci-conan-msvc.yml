@@ -32,14 +32,14 @@ jobs:
           pip3 install --upgrade setuptools pip requests
           pip3 install --upgrade conan
       - name: Configure Conan
-        run: conan remote add sintef ${env:CONAN_UPLOAD} --insert 0
+        run: conan remote add sintef ${env:CONAN_UPLOAD}
       - name: Conan create
         run: |
           conan create -s build_type=${{ matrix.build_type }} `
             -s compiler.toolset=${{ matrix.compiler_toolset }} `
             -s compiler.version=${{ matrix.compiler_version }} `
-            -s compiler="Visual Studio" `
-            -b missing -b outdated . sintef/stable
+            -s compiler="Visual Studio" -b missing -b outdated `
+            --update . sintef/stable
       - name: Conan upload
         run: |
           conan upload --all -c -r sintef ${env:SINTEF_REFERENCE} --retry 10 --retry-wait 20 --force
