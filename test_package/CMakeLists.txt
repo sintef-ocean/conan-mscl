@@ -20,4 +20,4 @@ set( SRC
     ${CMAKE_SOURCE_DIR}/src/startSampling.h)
 
 add_executable(${TESTER} ${SRC})
-target_link_libraries(${TESTER} PUBLIC  MSCL::mscl)
+target_link_libraries(${TESTER} PUBLIC MSCL::mscl)

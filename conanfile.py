@@ -7,65 +7,57 @@ class MSCLConan(ConanFile):
     license = "MIT"
     author = "Stian Skjong (stian.skjong@sintef.no)"
     description = \
-        "MSCL - The MicroStrain Communication Library. "\
-        "MSCL is developed by LORD Sensing - Microstrain in Williston, VT. "\
-        "It was created to make it simple to interact with our Wireless, "\
-        "Inertial, and digital Displacement sensors."
+            "MSCL - The MicroStrain Communication Library. "\
+            "MSCL is developed by LORD Sensing - Microstrain in Williston, VT. "\
+            "It was created to make it simple to interact with our Wireless, "\
+            "Inertial, and digital Displacement sensors."
     topics = ("MRU API", "MicroStrain")
     homepage = "https://github.com/LORD-MicroStrain/MSCL"
     url = "http://github.com/sintef-ocean/conan-mscl"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False],
-               "multi_core": [True, False],
-               "fPIC": [True, False]}
+            #"multi_core": [True, False],
+            "fPIC": [True, False]}
     default_options = {"shared": False,
-                       "multi_core": False,
-                       "fPIC": True}
+            #"multi_core": False,
+            "fPIC": True}
     generators = ("cmake_paths", "cmake_find_package")
-    requires = ("boost/1.78.0", "openssl/1.1.1g")
+    requires = ("boost/1.78.0", "openssl/1.1.1n")
     exports = ("version.txt", "CMakeLists.txt")
     exports_sources = "*"
 
     def set_version(self):
         self.version = tools.load(
-            self.recipe_folder + os.sep + "version.txt").strip()
+                self.recipe_folder + os.sep + "version.txt").strip()
 
     def source(self):
         tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v{}.tar.gz"
-                  .format(self.version))
+                .format(self.version), strip_root=True, destination="MSCL")
+        tools.replace_in_file(
+                str(self.source_folder) + os.sep
+                + "MSCL/MSCL/source/stdafx.h",
+                "boost/detail/endian.hpp",
+                "boost/endian.hpp")
+        tools.replace_in_file(
+                str(self.source_folder) + os.sep
+                + "MSCL/MSCL/source/mscl/Endianness.h",
+                "boost/detail/endian.hpp",
+                "boost/endian.hpp")
+        tools.replace_in_file(
+                str(self.source_folder) + os.sep
+                + "MSCL/MSCL_Unit_Tests/Test_Utils.cpp",
+                "boost/detail/endian.hpp",
+                "boost/endian.hpp")
 
     def configure(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
     def build(self):
-        tools.replace_in_file(
-            str(self.build_folder) + os.sep + "CMakeLists.txt",
-            "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/",
-            "${{CMAKE_CURRENT_SOURCE_DIR}}/MSCL-{}/".format(self.version))
-
-        tools.replace_in_file(
-            str(self.build_folder) + os.sep
-            + "MSCL-{}/MSCL/source/stdafx.h".format(self.version),
-            "boost/detail/endian.hpp",
-            "boost/endian.hpp")
-
-        tools.replace_in_file(
-            str(self.build_folder) + os.sep
-            + "MSCL-{}/MSCL/source/mscl/Endianness.h".format(self.version),
-            "boost/detail/endian.hpp",
-            "boost/endian.hpp")
-
-        tools.replace_in_file(
-            str(self.build_folder) + os.sep
-            + "MSCL-{}/MSCL_Unit_Tests/Test_Utils.cpp".format(self.version),
-            "boost/detail/endian.hpp",
-            "boost/endian.hpp")
-
-        cmake = CMake(self, parallel=self.options.multi_core)
+        cmake = CMake(self)#, parallel=self.options.multi_core)
         if self.settings.os != "Windows":
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
-        cmake.configure()
+        cmake.configure(source_folder=self.build_folder)
         cmake.build()
 
     def package(self):
@@ -74,4 +66,4 @@ class MSCLConan(ConanFile):
 
     def package_info(self):
         self.user_info.DIR = ("{}"
-                              .format(self.package_folder)).replace("\\", "/")
+                .format(self.package_folder)).replace("\\", "/")

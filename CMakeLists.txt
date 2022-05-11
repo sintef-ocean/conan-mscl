@@ -15,8 +15,6 @@ include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 find_package(Boost MODULE REQUIRED)
 find_package(OpenSSL MODULE REQUIRED)
 
-set(MSCL "mscl")
-
 if (UNIX)
     set(EXCLUDES
         "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/mscl/Communication/WsdaFinder.cpp"
@@ -48,7 +46,6 @@ else()
     get_WIN32_WINNT(ver)
     add_definitions(-D_WIN32_WINNT=${ver})
 endif()
-
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/*.cpp")
 
 foreach (excl ${EXCLUDES})
@@ -56,21 +53,25 @@ foreach (excl ${EXCLUDES})
     message("Excluding ${excl}")
 endforeach()
 
-add_library(${MSCL} STATIC ${SOURCES})
-
-target_include_directories(${MSCL} PRIVATE "${CONAN_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source")
-target_link_libraries(${MSCL} PUBLIC Boost::Boost PRIVATE OpenSSL::OpenSSL)
+add_library(mscl STATIC ${SOURCES})
+target_include_directories(mscl PRIVATE "${CONAN_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source")
+target_link_libraries(mscl PUBLIC Boost::Boost PRIVATE OpenSSL::OpenSSL)
 if (UNIX)
-    target_compile_definitions(${MSCL} PUBLIC UNIX_BUILD)
+    target_compile_definitions(mscl PUBLIC UNIX_BUILD)
 endif()
 
-target_include_directories(${MSCL} PUBLIC "$<INSTALL_INTERFACE:include>")
+target_include_directories(mscl PUBLIC "$<INSTALL_INTERFACE:include>")
 
 # ==========================================
 # Export config
 # ==========================================
 
-install(TARGETS ${MSCL} EXPORT ${CMAKE_PROJECT_NAME} ARCHIVE DESTINATION lib RUNTIME DESTINATION bin LIBRARY DESTINATION lib)
+install(TARGETS mscl
+   EXPORT ${CMAKE_PROJECT_NAME}
+   ARCHIVE DESTINATION lib
+   RUNTIME DESTINATION bin
+   LIBRARY DESTINATION lib
+   INCLUDES DESTINATION include)
 
 include(CMakePackageConfigHelpers)
 set(INSTALL_CONFIGDIR "cmake")
@@ -83,8 +84,7 @@ install(EXPORT
         ${CMAKE_PROJECT_NAME}
         DESTINATION "${INSTALL_CONFIGDIR}"
         NAMESPACE "${CMAKE_PROJECT_NAME}::"
-        FILE "${CMAKE_PROJECT_NAME}Targets.cmake"
-)
+        FILE "${CMAKE_PROJECT_NAME}Targets.cmake")
 
 export( EXPORT
         ${CMAKE_PROJECT_NAME}
