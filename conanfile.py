@@ -21,7 +21,7 @@ class MSCLConan(ConanFile):
             #"multi_core": False,
             "fPIC": True}
     generators = ("cmake_paths", "cmake_find_package")
-    requires = ("boost/1.69.0", "openssl/1.1.1n")
+    requires = ("boost/1.78.0", "openssl/1.1.1n")
     exports = ("version.txt", "CMakeLists.txt")
     exports_sources = "*"
 
@@ -32,6 +32,17 @@ class MSCLConan(ConanFile):
     def source(self):
         tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v{}.tar.gz"
                 .format(self.version), strip_root=True, destination="MSCL")
+        for f in ["MSCL/source/stdafx.h", "MSCL/source/mscl/Endianness.h", "MSCL_Unit_Tests/Test_Utils.cpp"]:
+            tools.replace_in_file(
+                    os.path.join( str(self.source_folder), "MSCL", f),
+                    "boost/detail/endian.hpp",
+                    "boost/predef/other/endian.h")
+
+        for f in ["MSCL/source/mscl/Endianness.h", "MSCL_Unit_Tests/Test_Utils.cpp"]:
+            tools.replace_in_file(
+                    os.path.join( str(self.source_folder), "MSCL", f),
+                    "BOOST_LITTLE_ENDIAN",
+                    "BOOST_ENDIAN_LITTLE_BYTE")
 
     def configure(self):
         if self.settings.os == "Windows":

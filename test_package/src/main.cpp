@@ -18,10 +18,10 @@ void PrintInfo(mscl::InertialNode& node) {
    cout << "Serial: " << node.serialNumber() << endl;
    cout << "Firmware: " << node.firmwareVersion().str() << endl << endl;
    getCurrentConfig(node);
-   setCurrentConfig(node);  // Warning:changes settings on your Node!
-   startSampling(node);
-   setToIdle(node);
-   parseData(node);
+   //setCurrentConfig(node);  // Warning:changes settings on your Node!
+   //startSampling(node);
+   //setToIdle(node);
+   //parseData(node);
 }
 int main(int argc, char** argv) {
    // Most use will depend on available hardware

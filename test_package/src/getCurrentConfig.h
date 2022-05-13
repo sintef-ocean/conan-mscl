@@ -55,11 +55,4 @@ static void getCurrentConfig(mscl::InertialNode& node)
             cout << "Sample Rate: " << ch.sampleRate().prettyStr() << endl << endl;
         }
     }
-
-    cout << "Altitude Aiding enabled?: " << node.getAltitudeAid() << endl;
-
-    mscl::PositionOffset offset = node.getAntennaOffset();
-    cout << "Antenna Offset: x=" << offset.x() << " y=" << offset.y() << " z=" << offset.z() << endl;
-
-    cout << "Pitch/Roll Aiding enabled?: " << node.getPitchRollAid() << endl;
 }

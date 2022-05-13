@@ -6,7 +6,7 @@ class MSCLTestConan(ConanFile):
     generators = ("cmake_paths", "cmake_find_package", "virtualrunenv")
     #options = {"shared": [True, False]}
     #default_options = {"shared": False}
-    requires = "boost/1.69.0"
+    #requires = "boost/1.69.0"
 
     def build(self):
         cmake = CMake(self)
