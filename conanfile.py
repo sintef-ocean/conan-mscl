@@ -1,7 +1,6 @@
 from conans import ConanFile, CMake, tools
 import os
 
-
 class MSCLConan(ConanFile):
     name = "mscl"
     license = "MIT"
@@ -33,21 +32,6 @@ class MSCLConan(ConanFile):
     def source(self):
         tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v{}.tar.gz"
                 .format(self.version), strip_root=True, destination="MSCL")
-        #tools.replace_in_file(
-        #        str(self.source_folder) + os.sep
-        #        + "MSCL/MSCL/source/stdafx.h",
-        #        "boost/detail/endian.hpp",
-        #        "boost/endian.hpp")
-        #tools.replace_in_file(
-        #        str(self.source_folder) + os.sep
-        #        + "MSCL/MSCL/source/mscl/Endianness.h",
-        #        "boost/detail/endian.hpp",
-        #        "boost/endian.hpp")
-        #tools.replace_in_file(
-        #        str(self.source_folder) + os.sep
-        #        + "MSCL/MSCL_Unit_Tests/Test_Utils.cpp",
-        #        "boost/detail/endian.hpp",
-        #        "boost/endian.hpp")
 
     def configure(self):
         if self.settings.os == "Windows":
@@ -65,5 +49,6 @@ class MSCLConan(ConanFile):
         cmake.install()
 
     def package_info(self):
+        self.cpp_info.libs = ["mscl"]
         self.user_info.DIR = ("{}"
                 .format(self.package_folder)).replace("\\", "/")

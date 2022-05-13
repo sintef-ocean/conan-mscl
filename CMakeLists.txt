@@ -53,18 +53,14 @@ foreach (excl ${EXCLUDES})
     message("Excluding ${excl}")
 endforeach()
 
-add_library(mscl STATIC ${SOURCES})
+add_library(mscl ${SOURCES})
 target_include_directories(mscl PRIVATE "${CONAN_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source")
-target_link_libraries(mscl PUBLIC Boost::Boost PRIVATE OpenSSL::OpenSSL)
+target_link_libraries(mscl PUBLIC OpenSSL::OpenSSL Boost::boost)
 if (UNIX)
     target_compile_definitions(mscl PUBLIC UNIX_BUILD)
 endif()
 
 target_include_directories(mscl PUBLIC "$<INSTALL_INTERFACE:include>")
-
-# ==========================================
-# Export config
-# ==========================================
 
 install(TARGETS mscl
    EXPORT ${CMAKE_PROJECT_NAME}
@@ -73,24 +69,4 @@ install(TARGETS mscl
    LIBRARY DESTINATION lib
    INCLUDES DESTINATION include)
 
-include(CMakePackageConfigHelpers)
-set(INSTALL_CONFIGDIR "cmake")
-configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/${CMAKE_PROJECT_NAME}Config.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake
-                              PATH_VARS INSTALL_CONFIGDIR
-                              INSTALL_DESTINATION ".")
-
-install(EXPORT
-        ${CMAKE_PROJECT_NAME}
-        DESTINATION "${INSTALL_CONFIGDIR}"
-        NAMESPACE "${CMAKE_PROJECT_NAME}::"
-        FILE "${CMAKE_PROJECT_NAME}Targets.cmake")
-
-export( EXPORT
-        ${CMAKE_PROJECT_NAME}
-        NAMESPACE MSCL::
-        FILE "${INSTALL_CONFIGDIR}/${CMAKE_PROJECT_NAME}Targets.cmake")
-
-install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${INSTALL_CONFIGDIR} DESTINATION "." PATTERN *swp EXCLUDE PATTERN *.in EXCLUDE)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake DESTINATION ".")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source/ DESTINATION include FILES_MATCHING PATTERN "*.h")

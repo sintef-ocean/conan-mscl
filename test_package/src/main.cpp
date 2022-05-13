@@ -17,6 +17,11 @@ void PrintInfo(mscl::InertialNode& node) {
    cout << "Model Number: " << node.modelNumber() << endl;
    cout << "Serial: " << node.serialNumber() << endl;
    cout << "Firmware: " << node.firmwareVersion().str() << endl << endl;
+   getCurrentConfig(node);
+   setCurrentConfig(node);  // Warning:changes settings on your Node!
+   startSampling(node);
+   setToIdle(node);
+   parseData(node);
 }
 int main(int argc, char** argv) {
    // Most use will depend on available hardware
@@ -28,9 +33,6 @@ int main(int argc, char** argv) {
       mscl::Connection connection = mscl::Connection::Serial(COM_PORT);
       mscl::InertialNode node(connection);
       PrintInfo(node);
-      // getCurrentConfig(node);
-      // setCurrentConfig(node);       //Warning: this example changes settings
-      // on your Node! startSampling(node); setToIdle(node); parseData(node);
    } catch (mscl::Error& e) {
       cout << "Could not access node on " << COM_PORT << " Error: " << e.what()
            << endl;
