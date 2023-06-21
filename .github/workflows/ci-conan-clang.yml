@@ -1,43 +1,58 @@
-name: Clang Conan
+---
+name: Linux Clang
 
-# This workflow is triggered on pushes to the repository.
-on: [push]
+on: [push, workflow_dispatch]
 
 env:
-  SINTEF_REFERENCE: "mscl*"
   CONAN_UPLOAD: ${{ secrets.CONAN_URL }}
   CONAN_PASSWORD_SINTEF: ${{ secrets.CONAN_PASSWORD }}
   CONAN_LOGIN_USERNAME_SINTEF: ${{ secrets.CONAN_USER }}
-  CONAN_NON_INTERACTIVE: True
-  CONAN_USE_ALWAYS_SHORT_PATHS: True
+  CONFIG_URL: https://github.com/sintef-ocean/conan-configs.git
 
 jobs:
   conan-with-clang:
     name: Conan
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-22.04
+    env:
+      USER_CHANNEL: "${{ matrix.conan == '1.0' && 'sintef/stable' || '--user sintef --channel stable' }}"
+      UPLOAD_FLAGS: "${{ matrix.conan == '1.0' && '--all' || '' }}"
+      cppstd: "${{ matrix.compiler_version < 15 && 'gnu14' || 'gnu17' }}"
     strategy:
       fail-fast: false
       matrix:
-        compiler_version: [9, 10, 11]
+        conan: ["1.0", "2.0"]
+        profile: [clang]
+        compiler_version: [11, 12, 13, 14]
         build_type: [Debug, Release]
-        os: [ubuntu-18.04]
     container:
-      image: conanio/clang${{ matrix.compiler_version }}
+      image: conanio/clang${{ matrix.compiler_version }}-ubuntu18.04
       options: -u 0
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install prerequisites
         run: |
-          sudo pip3 install --upgrade setuptools pip
-          sudo pip3 install --upgrade conan
+          sudo apt-get update
+          sudo apt-get install -y jq
+          pip3 install --upgrade setuptools pip
+          pip3 install --upgrade conan~=${{ matrix.conan }}
       - name: Configure Conan
         run: conan remote add sintef ${CONAN_UPLOAD}
+      - name: Get package name Conan 1
+        if: matrix.conan == '1.0'
+        run: echo "package_name=$(conan inspect --raw name .)" >> $GITHUB_ENV
+      - name: Get package name Conan 2
+        if: matrix.conan == '2.0'
+        run: echo "package_name=$(conan inspect -f json . | jq .name -r)" >> $GITHUB_ENV
       - name: Conan create
         run: |
+          git config --global --add safe.directory '*'
+          conan config install ${{ env.CONFIG_URL }}  --type git -sf conan${{ matrix.conan }}
+          conan config install ${{ env.CONFIG_URL }}  --type git -sf profiles -tf profiles
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
-            -s compiler.libcxx=libstdc++11 \
-            -b missing -b outdated --update . sintef/stable
+            -s compiler.cppstd=${{ env.cppstd }} \
+            -pr:b=${{ matrix.profile }} -pr:h=${{ matrix.profile }} \
+            -b missing -b outdated -b ${{ env.package_name }}* \
+            . ${{ env.USER_CHANNEL }}
       - name: Conan upload
-        run: |
-          conan upload --all -c -r sintef ${SINTEF_REFERENCE} --retry 10 --retry-wait 20 --force
+        run: conan upload --confirm -r sintef ${{ env.package_name }}* --force ${{ env.UPLOAD_FLAGS }}

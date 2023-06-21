@@ -5,15 +5,8 @@ project("MSCL"
         LANGUAGES CXX
         DESCRIPTION "MSCL - The MicroStrain Communication Library.")
 
-set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler flag extension (use -std=c++14 instead of -std=gnu++14)
-set(CMAKE_CXX_STANDARD 14) # The default CXX_STANDARD (resolves to a flag -std=c++14)..
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-message(STATUS "Using Conan to build...")
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
-find_package(Boost MODULE REQUIRED)
-find_package(OpenSSL MODULE REQUIRED)
+find_package(Boost REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 if (UNIX)
     set(EXCLUDES
@@ -55,12 +48,14 @@ endforeach()
 
 add_library(mscl ${SOURCES})
 target_include_directories(mscl PRIVATE "${CONAN_INCLUDE_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}/MSCL/MSCL/source")
-target_link_libraries(mscl PUBLIC OpenSSL::OpenSSL Boost::boost)
+target_link_libraries(mscl PUBLIC OpenSSL::SSL Boost::boost)
 if (UNIX)
     target_compile_definitions(mscl PUBLIC UNIX_BUILD)
 endif()
 
 target_include_directories(mscl PUBLIC "$<INSTALL_INTERFACE:include>")
+
+target_compile_features(mscl PRIVATE cxx_std_14)
 
 install(TARGETS mscl
    EXPORT ${CMAKE_PROJECT_NAME}

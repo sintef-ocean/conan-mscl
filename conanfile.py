@@ -1,10 +1,19 @@
-from conans import ConanFile, CMake, tools
-import os
+from os import path
+from conan import ConanFile
+from conan.errors import ConanInvalidConfiguration
+from conan.tools.microsoft import check_min_vs, is_msvc_static_runtime, is_msvc
+from conan.tools.files import get, copy, rm, rmdir, replace_in_file, load
+from conan.tools.build import check_min_cppstd
+from conan.tools.scm import Version
+from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.tools.env import VirtualBuildEnv
+
+required_conan_version = ">=1.53.0"
 
 class MSCLConan(ConanFile):
     name = "mscl"
     license = "MIT"
-    author = "Stian Skjong (stian.skjong@sintef.no)"
+    author = "SINTEF Ocean"
     description = \
             "MSCL - The MicroStrain Communication Library. "\
             "MSCL is developed by LORD Sensing - Microstrain in Williston, VT. "\
@@ -14,45 +23,93 @@ class MSCLConan(ConanFile):
     homepage = "https://github.com/LORD-MicroStrain/MSCL"
     url = "http://github.com/sintef-ocean/conan-mscl"
     settings = "os", "compiler", "build_type", "arch"
-    options = {"shared": [True, False],
-            #"multi_core": [True, False],
-            "fPIC": [True, False]}
-    default_options = {"shared": False,
-            #"multi_core": False,
-            "fPIC": True}
-    generators = ("cmake_paths", "cmake_find_package")
-    requires = ("boost/1.78.0", "openssl/1.1.1n")
-    exports = ("version.txt", "CMakeLists.txt")
-    exports_sources = "*"
+    options = {
+        "shared": [True, False],
+        "fPIC": [True, False]
+    }
+    default_options = {
+        "shared": False,
+        "fPIC": True
+    }
+
+    @property
+    def _min_cppstd(self):
+        return 14
+
+    @property
+    def _compilers_minimum_version(self):
+        return {
+            "msvc": "14.0",
+            "gcc": "5",
+            "clang": "5",
+            "apple-clang": "5.1",
+        }
 
     def set_version(self):
-        self.version = tools.load(
-                self.recipe_folder + os.sep + "version.txt").strip()
+        self.version = load(
+            self,
+            path.join(self.recipe_folder,"version.txt")).strip()
 
-    def source(self):
-        tools.get("https://github.com/LORD-MicroStrain/MSCL/archive/v{}.tar.gz"
-                .format(self.version), strip_root=True, destination="MSCL")
-        for f in ["MSCL/source/stdafx.h", "MSCL/source/mscl/Endianness.h", "MSCL_Unit_Tests/Test_Utils.cpp"]:
-            tools.replace_in_file(
-                    os.path.join( str(self.source_folder), "MSCL", f),
-                    "boost/detail/endian.hpp",
-                    "boost/predef/other/endian.h")
+    def export(self):
+        for fil in ["version.txt"]:
+            copy(self, fil, self.recipe_folder, self.export_folder)
 
-        for f in ["MSCL/source/mscl/Endianness.h", "MSCL_Unit_Tests/Test_Utils.cpp"]:
-            tools.replace_in_file(
-                    os.path.join( str(self.source_folder), "MSCL", f),
-                    "BOOST_LITTLE_ENDIAN",
-                    "BOOST_ENDIAN_LITTLE_BYTE")
+    def export_sources(self):
+        for fil in ["version.txt", "CMakeLists.txt"]:
+            copy(self, fil, self.recipe_folder, self.export_sources_folder)
 
-    def configure(self):
+    def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
 
+    def configure(self):
+        if self.options.shared:
+            self.options.rm_safe("fPIC")
+
+    def layout(self):
+        cmake_layout(self, src_folder=".")
+
+    def requirements(self):
+        self.requires("boost/[>=1.78.0 <1.82.0]")
+        self.requires("openssl/[>=1.1 <4]")
+
+    def validate(self):
+        if self.settings.compiler.cppstd:
+            check_min_cppstd(self, self._min_cppstd)
+        check_min_vs(self, 190)
+        if not is_msvc(self):
+            minimum_version = self._compilers_minimum_version.get(str(self.settings.compiler), False)
+            if minimum_version and Version(self.settings.compiler.version) < minimum_version:
+                raise ConanInvalidConfiguration(
+                    f"{self.ref} requires C++{self._min_cppstd}, which your compiler does not support."
+                )
+
+    def source(self):
+        get(self, **self.conan_data["sources"][self.version], strip_root=True, destination="MSCL")
+        for f in ["MSCL/source/stdafx.h", "MSCL/source/mscl/Endianness.h", "MSCL_Unit_Tests/Test_Utils.cpp"]:
+            replace_in_file(
+                self,
+                path.join(self.source_folder, "MSCL", f),
+                "boost/detail/endian.hpp",
+                "boost/predef/other/endian.h")
+
+        for f in ["MSCL/source/mscl/Endianness.h", "MSCL_Unit_Tests/Test_Utils.cpp"]:
+            replace_in_file(
+                self,
+                path.join(self.source_folder, "MSCL", f),
+                "BOOST_LITTLE_ENDIAN",
+                "BOOST_ENDIAN_LITTLE_BYTE")
+
+    def generate(self):
+        tc = CMakeToolchain(self)
+        tc.generate()
+
+        deps = CMakeDeps(self)
+        deps.generate()
+
     def build(self):
-        cmake = CMake(self)#, parallel=self.options.multi_core)
-        if self.settings.os != "Windows":
-            cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
-        cmake.configure(source_folder=self.build_folder)
+        cmake = CMake(self)
+        cmake.configure()
         cmake.build()
 
     def package(self):
@@ -61,5 +118,3 @@ class MSCLConan(ConanFile):
 
     def package_info(self):
         self.cpp_info.libs = ["mscl"]
-        self.user_info.DIR = ("{}"
-                .format(self.package_folder)).replace("\\", "/")

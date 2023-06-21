@@ -1,5 +1,5 @@
 ---
-name: Linux GCC
+name: Macos Apple-Clang
 
 on: [push, workflow_dispatch]
 
@@ -10,33 +10,28 @@ env:
   CONFIG_URL: https://github.com/sintef-ocean/conan-configs.git
 
 jobs:
-  conan-with-gcc:
+  conan-with-applw-clang:
     name: Conan
-    runs-on: ubuntu-22.04
+    runs-on: macos-latest
     env:
       USER_CHANNEL: "${{ matrix.conan == '1.0' && 'sintef/stable' || '--user sintef --channel stable' }}"
       UPLOAD_FLAGS: "${{ matrix.conan == '1.0' && '--all' || '' }}"
-      cppstd: "${{ matrix.compiler_version < 11 && 'gnu14' || 'gnu17' }}"
+      cppstd: "${{ matrix.compiler_version < 15 && 'gnu14' || 'gnu17' }}"
     strategy:
       fail-fast: false
       matrix:
         conan: ["1.0", "2.0"]
-        profile: [gcc]
-        compiler_version: [8, 9, 10, 11, 12]
+        profile: [apple_clang]
+        compiler_version: [14]
         build_type: [Debug, Release]
-    container:
-      image: conanio/gcc${{ matrix.compiler_version }}-ubuntu18.04
-      options: -u 0
     steps:
       - uses: actions/checkout@v3
       - name: Install prerequisites
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
           pip3 install --upgrade setuptools pip
           pip3 install --upgrade conan~=${{ matrix.conan }}
       - name: Configure Conan
-        run: conan remote add sintef ${{ env.CONAN_UPLOAD }}
+        run: conan remote add sintef ${CONAN_UPLOAD}
       - name: Get package name Conan 1
         if: matrix.conan == '1.0'
         run: echo "package_name=$(conan inspect --raw name .)" >> $GITHUB_ENV

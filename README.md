@@ -1,56 +1,58 @@
-[_![MSVC Conan](https://github.com/sintef-ocean/conan-mscl/workflows/MSVC%20Conan/badge.svg)_](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A%22MSVC+Conan%22)
-[_![GCC Conan](https://github.com/sintef-ocean/conan-mscl/workflows/GCC%20Conan/badge.svg)_](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A%22GCC+Conan%22)
-[_![Clang Conan](https://github.com/sintef-ocean/conan-mscl/workflows/Clang%20Conan/badge.svg)_](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A%22Clang+Conan%22)
+[![Linux GCC](https://github.com/sintef-ocean/conan-mscl/workflows/Linux%20GCC/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Linux+GCC")
+[![Linux Clang](https://github.com/sintef-ocean/conan-mscl/workflows/Linux%20Clang/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Linx+Clang")
+[![Windows MSVC](https://github.com/sintef-ocean/conan-mscl/workflows/Windows%20MSVC/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Windows+MSVC")
+[![Macos Apple-Clang](https://github.com/sintef-ocean/conan-mscl/workflows/Macos%20Apple-Clang/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Macos+Apple-Clang")
+
 
 [Conan.io](https://conan.io) recipe for [MSCL](https://github.com/LORD-MicroStrain/MSCL).
 
-The package is usually consumed using the `conan install` command or a *conanfile.txt*.
-
 ## How to use this package
 
-1. Add remote to conan's package [remotes](https://docs.conan.io/en/latest/reference/commands/misc/remote.html?highlight=remotes):
+1. Add remote to conan's package [remotes](https://docs.conan.io/2/reference/commands/remote.html)
 
    ```bash
-   $ conan remote add sintef https://artifactory.smd.sintef.no/artifactory/api/conan/conan-local   
+   $ conan remote add sintef https://artifactory.smd.sintef.no/artifactory/api/conan/conan-local
    ```
 
-2. Using *conanfile.txt* in your project with *cmake*
+2. Using [*conanfile.txt*](https://docs.conan.io/2/reference/conanfile_txt.html) and *cmake* in your project.
 
-   Add a [*conanfile.txt*](http://docs.conan.io/en/latest/reference/conanfile_txt.html) to your project. This file describes dependencies and your configuration of choice, e.g.:
+   Add *conanfile.txt*:
 
    ```
    [requires]
-   mscl/[>=0.1]@sintef/stable
+   mscl/64.2.2@sintef/stable
+
+   [tool_requires]
+   cmake/[>=3.25.0]
 
    [options]
-   mscl:shared=False # by default
 
-   [imports]
-   licenses, * -> ./licenses @ folder=True
+   [layout]
+   cmake_layout
 
    [generators]
-   cmake_paths
-   cmake_find_package
+   CMakeDeps
+   CMakeToolchain
+   VirtualBuildEnv
    ```
-
    Insert into your *CMakeLists.txt* something like the following lines:
    ```cmake
-   cmake_minimum_required(VERSION 3.13)
+   cmake_minimum_required(VERSION 3.15)
    project(TheProject CXX)
 
-   include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-   find_package(MSCL MODULE REQUIRED)
+   find_package(mscl CONFIG REQUIRED)
 
    add_executable(the_executor code.cpp)
-   target_link_libraries(the_executor MSCL::MSCL)
+   target_link_libraries(the_executor mscl::mscl)
    ```
-   Then, do
+   Install and build e.g. a Release configuration:
    ```bash
-   $ mkdir build && cd build
-   $ conan install .. -b missing -s build_type=<build_type>
+   $ conan install . -s build_type=Release -pr:b=default
+   $ source build/Release/generators/conanbuild.sh
+   $ cmake --preset conan-release
+   $ cmake --build build/Release
+   $ source build/Release/generators/deactivate_conanbuild.sh
    ```
-   where `<build_type>` is e.g. `Debug` or `Release`.
-   You can now continue with the usual dance with cmake commands for configuration and compilation. For details on how to use conan, please consult [Conan.io docs](http://docs.conan.io/en/latest/)
 
 ## Package options
 
@@ -58,8 +60,6 @@ The package is usually consumed using the `conan install` command or a *conanfil
 | ------------- | ----------------- | ----------------- |
 | shared        | [True, False]     | False             |
 | fPIC          | [True, False]     | True              |
-| multi_core    | [True, False]     | False             |
-
 
 ## Known recipe issues
 

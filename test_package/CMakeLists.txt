@@ -1,18 +1,10 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.15)
 project(mscl-test)
 
-set(CMAKE_CXX_EXTENSIONS OFF) # Disable compiler flag extension (use -std=c++11 instead of -std=gnu++11)
-set(CMAKE_CXX_STANDARD 14) # The default CXX_STANDARD (resolves to a flag -std=c++17)..
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-message(STATUS "Using Conan to build...")
-include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
-
 set(TESTER "TestTarget")
-find_package(mscl MODULE REQUIRED)
-find_package(Boost MODULE REQUIRED)
+find_package(mscl CONFIG REQUIRED)
 
-set( SRC
+set(SRC
     ${CMAKE_SOURCE_DIR}/src/getCurrentConfig.h
     ${CMAKE_SOURCE_DIR}/src/main.cpp
     ${CMAKE_SOURCE_DIR}/src/parseData.h
@@ -22,3 +14,4 @@ set( SRC
 
 add_executable(${TESTER} ${SRC})
 target_link_libraries(${TESTER} PUBLIC mscl::mscl)
+target_compile_features(${TESTER} PRIVATE cxx_std_14)
