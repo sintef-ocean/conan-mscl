@@ -1,8 +1,6 @@
 [![Linux GCC](https://github.com/sintef-ocean/conan-mscl/workflows/Linux%20GCC/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Linux+GCC")
 [![Linux Clang](https://github.com/sintef-ocean/conan-mscl/workflows/Linux%20Clang/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Linx+Clang")
 [![Windows MSVC](https://github.com/sintef-ocean/conan-mscl/workflows/Windows%20MSVC/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Windows+MSVC")
-[![Macos Apple-Clang](https://github.com/sintef-ocean/conan-mscl/workflows/Macos%20Apple-Clang/badge.svg)](https://github.com/sintef-ocean/conan-mscl/actions?query=workflow%3A"Macos+Apple-Clang")
-
 
 [Conan.io](https://conan.io) recipe for [MSCL](https://github.com/LORD-MicroStrain/MSCL).
 

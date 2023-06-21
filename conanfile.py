@@ -70,7 +70,7 @@ class MSCLConan(ConanFile):
         cmake_layout(self, src_folder=".")
 
     def requirements(self):
-        self.requires("boost/[>=1.78.0 <1.82.0]")
+        self.requires("boost/[>=1.78.0 <1.82.0]", transitive_headers=True)
         self.requires("openssl/[>=1.1 <4]")
 
     def validate(self):
