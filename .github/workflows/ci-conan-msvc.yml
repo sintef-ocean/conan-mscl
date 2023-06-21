@@ -36,13 +36,13 @@ jobs:
         shell: pwsh
         run: |
           $package_name=conan inspect --raw name .
-          echo "package_name=$package_name" >> $GITHUB_ENV
+          echo "package_name=$package_name" >> $Env:GITHUB_ENV
       - name: Get package name Conan 2
         if: matrix.conan == '2.0'
         shell: pwsh
         run: |
           $package_name=conan inspect -f json . | jq .name -r
-          echo "package_name=$package_name" >> $GITHUB_ENV
+          echo "package_name=$package_name" >> $Env:GITHUB_ENV
       - name: Conan create
         run: |
           conan config install ${{ env.CONFIG_URL }} --type git -sf conan${{ matrix.conan }}
