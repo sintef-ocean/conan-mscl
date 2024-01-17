@@ -16,11 +16,10 @@ jobs:
     env:
       USER_CHANNEL: "${{ matrix.conan == '1.0' && 'sintef/stable' || '--user sintef --channel stable' }}"
       UPLOAD_FLAGS: "${{ matrix.conan == '1.0' && '--all' || '' }}"
-      cppstd: "${{ matrix.compiler_version < 11 && 'gnu14' || 'gnu17' }}"
     strategy:
       fail-fast: false
       matrix:
-        conan: ["1.0", "2.0"]
+        conan: ["2.0"]
         profile: [gcc]
         compiler_version: [8, 9, 10, 11, 12]
         build_type: [Debug, Release]
@@ -50,7 +49,6 @@ jobs:
           conan config install ${{ env.CONFIG_URL }}  --type git -sf profiles -tf profiles
           conan create -s build_type=${{ matrix.build_type }} \
             -s compiler.version=${{ matrix.compiler_version }} \
-            -s compiler.cppstd=${{ env.cppstd }} \
             -pr:b=${{ matrix.profile }} -pr:h=${{ matrix.profile }} \
             -b missing -b outdated -b ${{ env.package_name }}* \
             -o boost/*:extra_b2_flags=define=BOOST_FILESYSTEM_DISABLE_STATX \

@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        conan: ["1.0", "2.0"]
+        conan: ["2.0"]
         profile: [msvc17]
         compiler_version: [191, 192, 193]
         build_type: [Debug, Release]
