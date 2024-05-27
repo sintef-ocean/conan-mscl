@@ -57,6 +57,8 @@ target_include_directories(mscl PUBLIC "$<INSTALL_INTERFACE:include>")
 
 target_compile_features(mscl PRIVATE cxx_std_14)
 
+set_target_properties(mscl PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS 1 )
+
 install(TARGETS mscl
    EXPORT ${CMAKE_PROJECT_NAME}
    ARCHIVE DESTINATION lib
