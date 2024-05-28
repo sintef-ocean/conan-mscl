@@ -65,13 +65,18 @@ class MSCLConan(ConanFile):
     def configure(self):
         if self.options.shared:
             self.options.rm_safe("fPIC")
+        self.options["*"].shared = self.options.shared
 
     def layout(self):
         cmake_layout(self, src_folder=".")
 
     def requirements(self):
         self.requires("boost/[>=1.78.0 <1.82.0]", transitive_headers=True)
-        self.requires("openssl/[>=1.1 <4]")
+        if self.options.shared:
+            print("Openssl transitive libs")
+            self.requires("openssl/[>=1.1 <4]", transitive_libs=True)
+        else:
+            self.requires("openssl/[>=1.1 <4]")
 
     def validate(self):
         if self.settings.compiler.cppstd:
