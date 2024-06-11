@@ -21,7 +21,7 @@ jobs:
       matrix:
         conan: ["2.0"]
         profile: [msvc17]
-        compiler_version: [191, 192, 193]
+        compiler_version: [192, 193]
         build_type: [Debug, Release]
     steps:
       - uses: actions/checkout@v3
