@@ -20,6 +20,7 @@ jobs:
         profile: [gcc]
         compiler_version: [11, 12, 13, 14]
         build_type: [Debug, Release]
+        build_shared: ["True", "False"]
         include:
           - linux: debian:latest
           -
@@ -59,6 +60,7 @@ jobs:
             -pr:b=${{ matrix.profile }} -pr:h=${{ matrix.profile }} \
             -b missing -b outdated -b '${{ env.package_name }}*' \
             -o boost/*:extra_b2_flags=define=BOOST_FILESYSTEM_DISABLE_STATX \
+            -o \&:shared=${{ matrix.build_shared }} \
             --user sintef --channel stable \
             .
       - name: Conan upload
