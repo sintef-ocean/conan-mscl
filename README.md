@@ -8,7 +8,7 @@
 1. Add remote to conan's package [remotes](https://docs.conan.io/2/reference/commands/remote.html)
 
    ```bash
-   $ conan remote add sintef https://package.smd.sintef.no
+   $ conan remote add sintef https://gitlab.sintef.no/api/v4/projects/22218/packages/conan
    ```
 
 2. Using [*conanfile.txt*](https://docs.conan.io/2/reference/conanfile_txt.html) and *cmake* in your project.
